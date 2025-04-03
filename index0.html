@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тесты на соответствие</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .test-list {
+            list-style: none;
+            padding: 0;
+        }
+        .test-list li {
+            margin: 10px 0;
+        }
+        a, button {
+            display: block;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px auto;
+            width: 200px;
+            border: none;
+            cursor: pointer;
+        }
+        a:hover, button:hover {
+            background: #0056b3;
+        }
+        .test-container {
+            display: none;
+        }
+        .questions {
+            text-align: left;
+        }
+        .answers select {
+            width: 150px;
+            margin: 5px;
+        }
+        .back {
+            background: #dc3545;
+        }
+        .back:hover {
+            background: #b52b3a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="main-menu">
+        <h2>Выберите тест</h2>
+        <ul class="test-list">
+            <li><button onclick="showTest(1)">Тест 1</button></li>
+            <li><button onclick="showTest(2)">Тест 2</button></li>
+            <li><button onclick="showTest(3)">Тест 3</button></li>
+            <li><button onclick="showTest(4)">Тест 4</button></li>
+            <li><button onclick="showTest(5)">Тест 5</button></li>
+            <li><button onclick="showTest(6)">Тест 6</button></li>
+            <li><button onclick="showTest(7)">Тест 7</button></li>
+            <li><button onclick="showTest(8)">Тест 8</button></li>
+            <li><button onclick="showTest(9)">Тест 9</button></li>
+            <li><button onclick="showTest(10)">Тест 10</button></li>
+        </ul>
+    </div>
+
+    <div class="container test-container" id="test-container">
+        <h2 id="test-title"></h2>
+        <p>Соедините вопросы с правильными ответами.</p>
+        <div class="test-content">
+            <div class="questions" id="questions"></div>
+            <div class="answers" id="answers"></div>
+        </div>
+        <button onclick="checkAnswers()">Проверить</button>
+        <p id="result"></p>
+        <button class="back" onclick="goBack()">Назад</button>
+    </div>
+
+    <script>
+        const tests = {
+            1: { 
+                title: "Тест 1",
+                questions: ["Столица Франции", "Самая длинная река", "Планета с кольцами"],
+                answers: ["Париж", "Нил", "Сатурн"]
+            },
+            2: { 
+                title: "Тест 2",
+                questions: ["Столица Германии", "Самый большой материк", "Спутник Земли"],
+                answers: ["Берлин", "Евразия", "Луна"]
+            },
+            3: { 
+                title: "Тест 3",
+                questions: ["Столица США", "Самый большой океан", "Ближайшая к Солнцу планета"],
+                answers: ["Вашингтон", "Тихий океан", "Меркурий"]
+            },
+            4: { 
+                title: "Тест 4",
+                questions: ["Столица России", "Самая высокая гора", "Красная планета"],
+                answers: ["Москва", "Эверест", "Марс"]
+            },
+            5: { 
+                title: "Тест 5",
+                questions: ["Столица Италии", "Самый большой остров", "Галактика, в которой находится Земля"],
+                answers: ["Рим", "Гренландия", "Млечный Путь"]
+            },
+            6: { 
+                title: "Тест 6",
+                questions: ["Столица Китая", "Сколько континентов на Земле", "Сколько дней в году"],
+                answers: ["Пекин", "6", "365"]
+            },
+            7: { 
+                title: "Тест 7",
+                questions: ["Столица Испании", "Сколько планет в Солнечной системе", "Как называется наша звезда"],
+                answers: ["Мадрид", "8", "Солнце"]
+            },
+            8: { 
+                title: "Тест 8",
+                questions: ["Столица Великобритании", "Какой металл жидкий при комнатной температуре", "Какой газ мы вдыхаем"],
+                answers: ["Лондон", "Ртуть", "Кислород"]
+            },
+            9: { 
+                title: "Тест 9",
+                questions: ["Столица Японии", "Как называется самый длинный день в году", "Что такое H2O"],
+                answers: ["Токио", "Солнцестояние", "Вода"]
+            },
+            10: { 
+                title: "Тест 10",
+                questions: ["Столица Канады", "Как называется самое твердое природное вещество", "Как называется самый маленький элемент"],
+                answers: ["Оттава", "Алмаз", "Атом"]
+            }
+        };
+
+        let currentTest = null;
+
+        function showTest(testNumber) {
+            currentTest = testNumber;
+            document.getElementById("main-menu").style.display = "none";
+            document.getElementById("test-container").style.display = "block";
+            document.getElementById("test-title").innerText = tests[testNumber].title;
+            
+            let questionsHtml = "";
+            let answersHtml = "";
+
+            tests[testNumber].questions.forEach((question, index) => {
+                questionsHtml += <p>${index + 1}. ${question}</p>;
+                answersHtml += `<select id="q${index}">
+                                    <option value="">Выберите...</option>
+                                    ${tests[testNumber].answers.map(answer => <option value="${answer}">${answer}</option>).join("")}
+                                </select>`;
+            });
+
+            document.getElementById("questions").innerHTML = questionsHtml;
+            document.getElementById("answers").innerHTML = answersHtml;
+            document.getElementById("result").innerText = "";
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            tests[currentTest].answers.forEach((answer, index) => {
+                if (document.getElementById(q${index}).value === answer) correct++;
+            });
+
+            document.getElementById("result").innerText = Ваш результат: ${correct} из ${tests[currentTest].answers.length};
+        }
+
+        function goBack() {
+            document.getElementById("main-menu").style.display = "block";
+            document.getElementById("test-container").style.display = "none";
+        }
+    </script>
+</body>
+</html>
